@@ -1,6 +1,7 @@
 import os
 from colorama import Fore, init
 init(autoreset=True)
+
 def apresentar():
   print(Fore.LIGHTYELLOW_EX + "===== To do List =====\n" + Fore.RESET + "1 --> Inserir uma nova nota\n2 --> Ver todas as notas\n3 --> Excluir uma nota\n4 --> Limpar\n5 --> Copiar lista\n6 --> Alterar arquivo de leitura\n7 --> Sair")
   x = int(input(Fore.LIGHTYELLOW_EX +"Insira sua escolha: "))
@@ -102,6 +103,8 @@ while(escolha != 7):
       arquivo+=".txt"
       conteudo.clear()
       primeira_linha = ""
+      print(Fore.GREEN + "Alterado com sucesso!")
+      limpar_tela()
   elif escolha == 7:
     print(Fore.RED + "Programa encerrado!")
     #pass
