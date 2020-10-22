@@ -4,7 +4,7 @@ init(autoreset=True)
 
 def apresentar(arquivo_atual):
   seta = Fore.YELLOW + "-->" + Fore.RESET
-  print(Fore.LIGHTYELLOW_EX + "===== " + (Fore.YELLOW + Style.BRIGHT) +"To do List" +(Style.RESET_ALL + Fore.LIGHTYELLOW_EX) +" =====\n" + Fore.RESET + "1 "+ seta +" Inserir uma nova nota\n2 "+ seta +" Ver todas as notas\n3 "+ seta +" Excluir uma nota\n4 "+ seta +" Limpar\n5 "+ seta +" Copiar lista\n6 "+ seta +" Alterar arquivo de leitura\n7 "+ seta +" Sair"+ Fore.LIGHTYELLOW_EX + "\n>>> " + (Fore.YELLOW + Style.BRIGHT + arquivo_atual) + (Style.RESET_ALL + Fore.LIGHTYELLOW_EX + " <<<"))
+  print(Fore.LIGHTYELLOW_EX + "===== " + (Fore.YELLOW + Style.BRIGHT) +"To do List" +(Style.RESET_ALL + Fore.LIGHTYELLOW_EX) +" =====\n" + Fore.RESET + "1 "+ seta +" Inserir uma nova nota\n2 "+ seta +" Ver todas as notas\n3 "+ seta +" Excluir uma nota\n4 "+ seta +" Limpar\n5 "+ seta +" Copiar lista\n6 "+ seta +" Alterar arquivo de leitura\n7 "+ seta + " Remover arquivo\n8 " + seta +" Sair"+ Fore.LIGHTYELLOW_EX + "\n>>> " + (Fore.YELLOW + Style.BRIGHT + arquivo_atual) + (Style.RESET_ALL + Fore.LIGHTYELLOW_EX + " <<<"))
   x = int(input(Fore.LIGHTYELLOW_EX +"Insira sua escolha: "))
   os.system('clear')
   return x
@@ -34,7 +34,7 @@ def limpar_tela():
 criar("notas.txt")
 escolha = 0 # Declaração para iniciar o loop.
 arquivo = "notas.txt"
-while(escolha != 7):
+while(escolha != 8):
   #Varredura do arquivo
   try: 
     arq = open(arquivo,"r") # Abro o arquivo em modo leitura
@@ -134,6 +134,18 @@ while(escolha != 7):
       print(Fore.GREEN + "Alterado com sucesso!")
       limpar_tela()
   elif escolha == 7:
+    arq.close()
+    print(Fore.GREEN + "Arquivos disponíveis: ")
+    os.system("ls -a")
+    if input(Fore.GREEN + 'Insira ' + Fore.RESET + '"Sim"' + Fore.GREEN + ' caso deseje apagar.' + Fore.RESET +'\nDigite: ').lower() == "sim":
+      remover = str(input(Fore.RED + "Insira:"+ Fore.RESET + " "))
+      try:
+        os.system(("rm "+ remover))
+        print(Fore.RED + "\nARQUIVO REMOVIDO")
+      except: 
+        print(Fore.RED + "Error")
+    limpar_tela()
+  elif escolha == 8:
     print(Fore.RED + "Programa encerrado!")
     #pass
   else:
