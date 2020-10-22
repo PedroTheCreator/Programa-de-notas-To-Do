@@ -1,9 +1,10 @@
 import os
-from colorama import Fore, init
+from colorama import Fore, init, Style
 init(autoreset=True)
 
-def apresentar():
-  print(Fore.LIGHTYELLOW_EX + "===== To do List =====\n" + Fore.RESET + "1 --> Inserir uma nova nota\n2 --> Ver todas as notas\n3 --> Excluir uma nota\n4 --> Limpar\n5 --> Copiar lista\n6 --> Alterar arquivo de leitura\n7 --> Sair")
+def apresentar(arquivo_atual):
+  seta = Fore.YELLOW + "-->" + Fore.RESET
+  print(Fore.LIGHTYELLOW_EX + "===== " + (Fore.YELLOW + Style.BRIGHT) +"To do List" +(Style.RESET_ALL + Fore.LIGHTYELLOW_EX) +" =====\n" + Fore.RESET + "1 "+ seta +" Inserir uma nova nota\n2 "+ seta +" Ver todas as notas\n3 "+ seta +" Excluir uma nota\n4 "+ seta +" Limpar\n5 "+ seta +" Copiar lista\n6 "+ seta +" Alterar arquivo de leitura\n7 "+ seta +" Sair"+ Fore.LIGHTYELLOW_EX + "\n>>> " + (Fore.YELLOW + Style.BRIGHT + arquivo_atual) + (Style.RESET_ALL + Fore.LIGHTYELLOW_EX + " <<<"))
   x = int(input(Fore.LIGHTYELLOW_EX +"Insira sua escolha: "))
   os.system('clear')
   return x
@@ -12,6 +13,13 @@ def criar(nome_do_arquivo):
   arq = open(nome_do_arquivo,"a")
   arq.close()
 
+def copiar(arquivo_original, copia):
+  arq = open(arquivo_original,"r")
+  carq = open(copia,"w+")
+  conteudo = arq.readlines()
+  carq.writelines(conteudo)
+  arq.close() ; carq.close()
+  
 def limpar_nota(nome_do_arquivo, zerar):
   arq = open(nome_do_arquivo,"w") # Cria o arquivo.
   if zerar: #Caso seja True:
@@ -28,7 +36,12 @@ escolha = 0 # Declaração para iniciar o loop.
 arquivo = "notas.txt"
 while(escolha != 7):
   #Varredura do arquivo
-  arq = open(arquivo,"r") # Abro o arquivo em modo leitura
+  try: 
+    arq = open(arquivo,"r") # Abro o arquivo em modo leitura
+  except: # Caso não exista ele será criado 
+    criar(arquivo)
+    limpar_nota(arquivo, True)
+    arq = open(arquivo,"r")
   primeira_linha = arq.readline() # Leio a primeira linha onde contém o total
   try:
     total = int(primeira_linha[16:(len(primeira_linha))]) #Busca o número total de notas, caso não exista um total ele cai no except.
@@ -37,7 +50,7 @@ while(escolha != 7):
     total = int(primeira_linha[16:(len(primeira_linha))]) # Passa isso para a varíavel total.
   conteudo = arq.readlines() # Recebe tudo que está abaixo do contador.
   arq.close()
-  escolha = apresentar()
+  escolha = apresentar(arquivo)
   #Funções do menu
   if escolha == 1:
     nota = str(input("Insira sua nota: ")) # Recebo a nota
@@ -52,15 +65,25 @@ while(escolha != 7):
     print(Fore.GREEN + "\nNOTA INSERIDA COM SUCESSO") # Feedback ao usuário
     limpar_tela() #Função extra, consulte no slide.
   elif escolha == 2:
-    print(Fore.LIGHTYELLOW_EX + "Você tem {} notas\nSuas notas: \n".format(total))
+    print(Fore.LIGHTYELLOW_EX + "Você tem "+ (Fore.RESET + str(total) + Fore.LIGHTYELLOW_EX + " notas") + (Fore.YELLOW + Style.BRIGHT) + "\nSuas notas: \n")
+    colorcount = 0
     for i in conteudo:
-      print(i)
-    input(Fore.LIGHTYELLOW_EX + "Pressione ENTER para continuar.")
+      if colorcount%2 != 0:
+        print(Fore.RESET+i+Fore.RESET)
+      else:
+        print(Fore.LIGHTGREEN_EX+i+Fore.RESET)
+      colorcount+=1
+    input(Fore.LIGHTYELLOW_EX + "Pressione" + Fore.YELLOW + " ENTER " + Fore.LIGHTYELLOW_EX + "para continuar.")
     os.system("clear")
   elif escolha == 3:
-    print("Você tem {} notas\nSuas notas: \n".format(total)) #Repete a visualização
+    print(Fore.LIGHTYELLOW_EX + "Você tem "+ (Fore.RESET + str(total) + Fore.LIGHTYELLOW_EX + " notas") + (Fore.YELLOW + Style.BRIGHT) + "\nSuas notas: \n") #Repete a visualização
+    colorcount = 0
     for i in conteudo:
-      print(i)
+      if colorcount%2 != 0:
+        print(Fore.RESET+i+Fore.RESET)
+      else:
+        print(Fore.LIGHTGREEN_EX+i+Fore.RESET)
+      colorcount+=1
     apagador = int(input(Fore.LIGHTYELLOW_EX + "Insira a nota que deseja apagar: ")) # Recebo o índice
     conteudo.pop((apagador-1)) # Apago da lista, com descréscimo, pois a lista começa em 0.
     total-=1 #Decréscimo no total
@@ -77,6 +100,11 @@ while(escolha != 7):
   elif escolha == 4:
     confirmacao = str(input('Insira "Sim" caso deseje apagar todas as suas notas.\nDigite: ')) #Input de confirmação.
     if confirmacao.lower() == "sim": # Comparação.
+      limpar_tela()
+      if total > 0 and input('Você tem ' + (Fore.RESET) + str(total) + Fore.LIGHTYELLOW_EX +' notas nesse arquivo.\nInsira ' + Fore.RESET + '"Sim"' + Fore.LIGHTYELLOW_EX + ' caso deseje fazer uma cópia antes de apagar.' + Fore.RESET +'\nDigite: ').lower() == "sim":
+        os.system("clear")
+        nomedoarq = str(input(Fore.LIGHTYELLOW_EX + "Insira o nome da cópia: ")) + ".txt"
+        copiar(arquivo, nomedoarq)
       limpar_nota(arquivo, True) # Função de organização.
       conteudo.clear() # Limpeza na lista recebida da rotina de loop.
       total = 0 # Zerar o contador.
