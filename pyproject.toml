@@ -7,6 +7,8 @@ authors = ["repl.it user <replituser@example.com>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 colorama = "^0.4.4"
+pysimplegui = "^4.30.0"
+wang-test = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 

@@ -1,16 +1,20 @@
 import os
 from colorama import Fore, init, Style
+from func import iris
 init(autoreset=True)
 
+
 def apresentar(arquivo_atual):
-  seta = Fore.YELLOW + "-->" + Fore.RESET
+  arquivo_atual = iris(arquivo_atual,False,True)
+  #seta = Fore.YELLOW + "-->" + Fore.RESET
+  seta = iris("--->",False,True)
   print(Fore.LIGHTYELLOW_EX + "===== " + (Fore.YELLOW + Style.BRIGHT) +"To do List" +(Style.RESET_ALL + Fore.LIGHTYELLOW_EX) +" =====\n" + Fore.RESET + "1 "+ seta +" Inserir uma nova nota\n2 "+ seta +" Ver todas as notas\n3 "+ seta +" Excluir uma nota\n4 "+ seta +" Limpar\n5 "+ seta +" Copiar lista\n6 "+ seta +" Alterar arquivo de leitura\n7 "+ seta + " Remover arquivo\n8 " + seta +" Sair"+ Fore.LIGHTYELLOW_EX + "\n>>> " + (Fore.YELLOW + Style.BRIGHT + arquivo_atual) + (Style.RESET_ALL + Fore.LIGHTYELLOW_EX + " <<<"))
   x = int(input(Fore.LIGHTYELLOW_EX +"Insira sua escolha: "))
   os.system('clear')
   return x
 
 def criar(nome_do_arquivo):
-  arq = open(nome_do_arquivo,"a")
+  arq = open(nome_do_arquivo,"w")
   arq.close()
 
 def copiar(arquivo_original, copia):
@@ -31,22 +35,25 @@ def limpar_tela():
   os.system("clear") # Limpa o console.
 
 #Criação do arquivo, caso não exista.
-criar("notas.txt")
+#criar("notas.txt")
 escolha = 0 # Declaração para iniciar o loop.
 arquivo = "notas.txt"
 while(escolha != 8):
   #Varredura do arquivo
   try: 
     arq = open(arquivo,"r") # Abro o arquivo em modo leitura
+    primeira_linha = arq.readline()
   except: # Caso não exista ele será criado 
     criar(arquivo)
     limpar_nota(arquivo, True)
     arq = open(arquivo,"r")
-  primeira_linha = arq.readline() # Leio a primeira linha onde contém o total
+    primeira_linha = arq.readline() # Leio a primeira linha onde contém o total
   try:
     total = int(primeira_linha[16:(len(primeira_linha))]) #Busca o número total de notas, caso não exista um total ele cai no except.
   except:
     limpar_nota(arquivo, True) # Cria o contador iniciando em 0
+    print(Fore.RED + "Nota foi resetada, falha ao buscar padrão de dados.\n")
+    primeira_linha = arq.readline()
     total = int(primeira_linha[16:(len(primeira_linha))]) # Passa isso para a varíavel total.
   conteudo = arq.readlines() # Recebe tudo que está abaixo do contador.
   arq.close()
@@ -101,7 +108,7 @@ while(escolha != 8):
     confirmacao = str(input('Insira "Sim" caso deseje apagar todas as suas notas.\nDigite: ')) #Input de confirmação.
     if confirmacao.lower() == "sim": # Comparação.
       limpar_tela()
-      if total > 0 and input('Você tem ' + (Fore.RESET) + str(total) + Fore.LIGHTYELLOW_EX +' notas nesse arquivo.\nInsira ' + Fore.RESET + '"Sim"' + Fore.LIGHTYELLOW_EX + ' caso deseje fazer uma cópia antes de apagar.' + Fore.RESET +'\nDigite: ').lower() == "sim":
+      if total > 0 and input('Você tem ' + (Fore.RESET) + str(total) + Fore.LIGHTYELLOW_EX +' notas nesse '+ iris('arquivo',False,True) + '.\nInsira ' + Fore.RESET + '"Sim"' + Fore.LIGHTYELLOW_EX + ' caso deseje fazer uma cópia antes de apagar.' + Fore.RESET +'\nDigite: ').lower() == "sim":
         os.system("clear")
         nomedoarq = str(input(Fore.LIGHTYELLOW_EX + "Insira o nome da cópia: ")) + ".txt"
         copiar(arquivo, nomedoarq)
@@ -122,6 +129,16 @@ while(escolha != 8):
     carq.writelines(conteudo)
     carq.close()
     limpar_tela()
+    if input("Deseja alterar para a cópia? Caso queira, digite 'Sim'.\nInsira: ").lower() == "sim":
+      arq.close()
+      arquivo = ""
+      arquivo = copia
+      conteudo.clear()
+      primeira_linha = ""
+      print(Fore.GREEN + "Alterado com sucesso!")
+      limpar_tela()
+    else:
+      limpar_tela()
   elif escolha == 6:
     print("Arquivo lido atualmente: {}".format(arquivo))
     if str(input("Deseja alterar? Caso queira, digite 'Sim'.\nInsira: ")).lower() == "sim":
